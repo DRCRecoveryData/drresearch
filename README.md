@@ -24,11 +24,59 @@ You will then receive a file with the LDPC paramters to be used for decoding dum
 ## Current Limitations:
 * Dynamic XOR pattern
 
-These tools try to automatically recover the XOR key from the NAND flash dump, but this doesnt work yet for Dynamic XOR patterns. The initpattern tool generates 00, 77 and FF patterns which should help you for recovering the XOR pattern. In case of dynamic XOR you have to decode the XOR yourself before feeding it to the dumpextractrelevant tool. If there is still a XOR pattern left that covers the pattern, the dumpextractrelevant tool will tell you that it can't find the necessary patterns.
+These tools try to automatically recover the XOR key from the NAND flash dump. Whole-dump and
+per-block keystreams are handled now: `perblock_xor.patch` indexes the key at the absolute page
+offset instead of `pagesize * (pagen % pagesperblock)`, and `xorsolve_perblock.py` recovers the key
+byte of every block by a 256-way `|Block#`^k search. `kat/run_kat.sh` measures both sides: with a
+static key the patched and the stock extraction are byte-identical at 99 %, and with a per-block
+key the stock tool reports 6 % and gives up while the patched tool reaches 99 % with descrambled
+bytes equal to ground truth. A key that changes per page is still out of reach, because each key
+byte then gets one known-plaintext sample and there is nothing to vote over - decode that yourself
+before feeding the dump to dumpextractrelevant.pl.
+
+* Anchor extraction stops short of the whole grid
+
+dumpextractrelevant.pl counts an anchor only when its three address fields parse, so bit rot inside
+the digits drops a record that is otherwise intact. On a PS2251-11 / BiCS4 dump (42,042,654,720 B,
+page 18,432 B = 16 x (1024 DATA + 6 SA + 114 ECC), 2,064,385 grid points) it reports
+Found 2,062,902 Missing 1,483. Two additions close that:
+
+- `repair_anchors.py` votes over the three address fields with one-bit repair: 2,051,830 grid points
+  (99.3918 %) and 1,378 of the 1,485 unreadable targets, 3-6 bits from the expected record with 0-3
+  bits of skeleton rot.
+- `positional_anchors.py` credits an LBA from the record shell plus a block-level ladder consensus
+  over `B0 = L - 32p - i`, rather than a per-page plurality - a page whose own anchors tie against a
+  foreign record otherwise picks a wrong base silently. Full dump: 2,064,385 of 2,064,385 credited
+  (tier 3 2,051,494, tier 1 12,868, tier 2 23), zero conflicts, zero pages off the ladder, and all
+  1,485 targets recovered. `KAT=1 python positional_anchors.py` checks the tier logic including the
+  tie control.
+
+`compare_methods.py` joins the two routes on grid index: the consensus set is a strict subset of the
+positional set, 12,555 points are positional-only, and no point that consensus accepted was evaluated
+and refused by positional. `finish_after_sweep.py` re-reads the raw bytes at the published offsets and
+re-derives each tier's own claim (tier 3 3000/3000, tier 1 3000/3000, tier 2 23/23).
+
+One bug in the shipped tool is worth naming, because it inflates any count measured with it:
+`%posfound` was never cleared per page, so every page was digit-parsed at byte offsets marked by
+other pages - an accidental bit-rot rescue that put ~170 spurious points on a 60-block slice whose
+legitimate coverage was 11.9 %. It is now explicit (cleared per page, `POSFOUND_LEGACY=1` restores
+the old behaviour) and a `Byte: `-anchored pass accepts a record only on evidence: all format bytes
+present AND (arithmetic agreement OR a field needing no repair). Damaged fixture 499/512 to 512/512,
+clean fixture unchanged at 512, full dump 2,062,900 found - equal to the independent audit.
 
 * ECC coverage over SA
 
-If the ECC is covering the DATA+SA area, the key extraction is more difficult and needs further research but it's believed to be doable. In this case, you will need to write a complete 77 pattern to the disk and provide access to a dump of that as well.
+If the ECC is covering the DATA+SA area, the key extraction is more difficult and needs further research but it's believed to be doable. In this case, you will need to write a complete 77 pattern to the disk and provide access to a dump of that as well. On the PS2251-11 / BiCS4 geometry SA is its own 6 B field between DATA and ECC, so that case is not decided by the field layout; the dump used above already contains the 77 window this paragraph asks for (pattern.xml 2,097,152..2,621,439).
+
+* The LDPC parameters themselves
+
+`recover_h.py` builds H from the dual code of the observed codewords, which needs no upload and no
+known plaintext: a 1144 B chunk is one codeword of a binary [9152, ~8240] code, so 912 checks are the
+null space of the codeword span. Its selftest recovers 912/912 known checks at syndrome-zero 1.0000
+on held-out codewords. On real data it reaches rank 7,056 of 8,240 and 7 true checks, because the
+written content is a known pattern rather than random: the codewords do not span the code. The hmatrix
+therefore still comes from the reconstruction service, and a random-content pattern write would make
+this route work.
 
 ## Usage
 
