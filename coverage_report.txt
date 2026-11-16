@@ -1,0 +1,41 @@
+
+== table tallies (derived from the file, not from the sweep stdout)
+rows                       : 2064385
+  tier 3 :  2051494  (99.3756%)
+  tier 1 :    12868  (0.6233%)
+  tier 2 :       23  (0.0011%)
+  tier 0 :        0  (0.0000%)
+credited                   : 2064385
+grid points                : 2064385
+coverage of the grid       : 100.0000%  (credited 2064385 / grid 2064385)
+distinct LBAs in the table : 2064385  (must equal rows)
+base_src 1 / 2             : 2064363 / 22
+blocks with rows           : 505 (505 of them carry >100 slots)
+  credited/slot over dense blocks: min 1.00000 median 1.00000 max 1.00000
+  5 least-covered dense blocks   : b216 4096/4096  b217 4096/4096  b418 2731/2731  b419 4096/4096  b420 4096/4096
+  dense blocks not at 100%       : 0
+
+== map consistency
+dump offsets unique        : True (duplicates 0)
+offset == blk/page/sect    : True (mismatches 0)
+LBA sorted / no gaps of 0  : True
+every LBA on the inc=9 grid: True (off-grid rows 0)
+every LBA inside the ECC window: True (outside 0)
+
+== raw-bytes verification of published offsets
+rows checked               : 6023  (tiers 3/1/2/0 per tier, capped at 3000 each)
+  tier 3: claim re-derives from the raw bytes for 3000 / 3000 rows
+  tier 1: claim re-derives from the raw bytes for 3000 / 3000 rows
+  tier 2: claim re-derives from the raw bytes for 23 / 23 rows
+  tier 0: claim re-derives from the raw bytes for 0 / 0 rows
+
+== the 1,485 previously-missing targets
+  tier 3 : 1378
+  tier 1 : 106
+  tier 2 : 1
+  total targets             : 1485  -> written to target_tiers.txt
+
+anchor map                 : C:\Users\drclab\Documents\Qoder\2026-11-15\7246e382\drresearch\anchor_map_full.txt (2064385 rows)
+sha256                     : 5522198e5c99c99ab6c8019a700d801a757d13a64d0a45e9183c116a7fc72010
+
+PIPELINE DONE

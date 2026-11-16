@@ -1,0 +1,24 @@
+method comparison: positional vs digit consensus
+  positional table : C:\Users\drclab\Documents\Qoder\2026-11-15\7246e382\drresearch\positional_full.txt  (2064385 rows, 2064385 credited, 0 refused)
+  consensus set    : repair_full.txt.allgrid.txt  (2051830 accepted grid indices of 2064385)
+  consensus target table: repair_full.txt (1378 rows)
+
+grid points (of 2064385):
+  credited by positional        :    2064385  (100.0000%)
+  accepted by consensus         :    2051830  (99.3918%)
+  credited by BOTH              :    2051830
+  positional only, no consensus :      12555
+  consensus, positional REFUSED :          0   <-- method conflict, explained below
+  consensus, positional no row  :          0   (page had no base, so never evaluated)
+  union of the two routes       :    2064385  (100.0000%)
+  neither                       :          0
+
+positional-only rows - consensus rejected these; its gate was skeleton<=12 bits:
+  label distance : min 0 median 0 max 7
+  tier: 1:12532, 2:23
+
+the 1485 hard targets:
+  both routes           : 1378
+  consensus only        : 0
+  positional only       : 107
+  neither               : 0

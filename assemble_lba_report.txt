@@ -1,0 +1,12 @@
+map rows in blocks [500, 501, 502, 503]: 16,384 over 4,608 pages; base agrees across all rows of a page on 4,608 pages, disagrees on 0
+LBA min 6,156,288  probe span 184,288 sectors = 94,355,456 B output
+placed 4,000 pages (128,000 sectors, 65,536,000 B) at lba_assembled_probe.img
+
+self-check over 14,222 map rows, reading the assembled file back:
+  output sector == source sector (key removed) : 14,222 (100.00 %)
+  `|Block#` literal present in that sector     : 13,165 (92.57 %)
+  decimal field parses                         : 13,156
+  decimal field equals the LBA the row claims  : 11,882
+  rotted past reading (channel, not placement) : 1,057
+
+verdict: placement confirmed - every row lands byte-exactly where its LBA says, and the shells that still parse agree with it. Stage 11 is correct as it stands and only needs decoded sector bytes instead of raw ones; the unparseable remainder is the raw ECC error load the decoder has to remove.

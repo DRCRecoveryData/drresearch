@@ -1,0 +1,7 @@
+decoded 50 pages / 50 codewords with 1 thread(s) in 0.02 s
+  throughput: 0.1 MB/s of dump, 2.8k codewords/s
+  converged: 40 / 50 (80.00%)
+  mean iterations per codeword: 0.00 (cap 1)
+  bits changed against the received word: 92
+  failed checks before: 309, after: 37
+  region 0 at page offset 0: mean iterations 0.00, converged 40 / 50

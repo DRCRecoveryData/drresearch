@@ -1,0 +1,25 @@
+vectorised min-sum vs the author's, same H / same LLRs / same 20-iteration cap
+geometry n=9152 m=912 row weight 16 nnz 14592, batch 2 sub-codewords, 3 injected bit errors each
+
+per codeword        author        vectorised     speedup
+decode total         2.247 s       0.00847 s      265.2x
+
+accepted (syndrome zero): author 2/2, vectorised 2/2
+bit-identical hard decisions: 2/2 codewords
+iterations used author      : [1, 1]
+channel errors per codeword : [3, 3]
+residual after author       : [4596, 4646]
+residual after vectorised   : [4596, 4646]
+iterations used vectorised  : [1, 1]
+
+throughput: author 0.445 codewords/s, vectorised 118.0 codewords/s single-core
+extraction: 11805664 sub-codewords -> author 307.0 days, vectorised 27.8 h at batch 2
+full dump: 36495360 sub-codewords -> author 949.1 days, vectorised 85.9 h at batch 2
+
+gotchas
+- the author rebuilds decoder(H) per sub-codeword; its constructor alone measured 0.041 s,
+  and setInputMSA scans every column with np.where (0.043 s) - both inside his per-codeword time
+- np.sign(0) is kept as 0 in the check product so the update matches his np.prod(np.sign(...))
+- float sum order differs from his per-edge np.sum, so ties can flip; agreement is reported,
+  not assumed
+- needs uniform row weight; a real hmatrix with irregular rows needs the check grid padded too

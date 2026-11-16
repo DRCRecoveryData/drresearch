@@ -1,0 +1,6 @@
+# Mapfile. Created by dumprelevantextract
+# THIS DEBUG LOGFILE SHOWS THE PAGES OF THE DUMP IN WHICH BLOCKS WERE FOND
+# Commandline. synth_corrupt.dump /tmp/f7.dump synth_static.pattern.xml synth_static_Chip.txt
+# Start time: Mon Nov 16 06:45:41 2026
+0x0 + 1
+# pos      size   status

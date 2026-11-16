@@ -1,0 +1,31 @@
+blocks [500, 501, 502]  key 01_01_plain.dump.xor  DATA field 8192 bits
+  block 501: 17,776 chunks, 41 anchorless pages
+  block 500: 18,176 chunks, 16 anchorless pages
+  block 502: 18,240 chunks, 12 anchorless pages
+
+chunks sampled            : 54,192
+mean errors / chunk       : 12.914 bits
+raw bit error rate        : 1.576e-03   (sd/mean expected sqrt(1/(BITS*ber))=0.278 for pure binomial noise)
+median                    : 12 bits
+  p50   :   12 bits
+  p75   :   17 bits
+  p90   :   21 bits
+  p95   :   25 bits
+  p99   :   31 bits
+  p99.9 :   38 bits
+max                       : 51 bits
+
+share of chunks under a candidate correction budget
+  <=   0 errors :      20  (  0.037 %)
+  <=   5 errors :   5,141  (  9.487 %)
+  <=  10 errors :  22,015  ( 40.624 %)
+  <=  15 errors :  37,568  ( 69.324 %)
+  <=  20 errors :  47,583  ( 87.804 %)
+  <=  30 errors :  53,624  ( 98.952 %)
+  <=  50 errors :  54,191  ( 99.998 %)
+  <= 100 errors :  54,192  (100.000 %)
+
+what this decides:
+  - known-clean codewords for a local dual-code route: 20 of 54,192 (0.037 %) - too few to span 8,240 dims, which is the second,
+    independent reason local H recovery cannot work on this dump.
+  - the code has to absorb a median of 12 and a p99 of 31 errors per 1,144 B chunk, on 54,192 chunks of raw noise.

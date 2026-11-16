@@ -1,0 +1,13 @@
+40 blocks x 1152 pages = 46,080 pages, tail 128 B (5,898,240 bytes)
+tail all 0x00            : 54.1168 % of pages
+tail contains "Byte:"    : 0 of 46080 pages (0.000 %)  -> the tail holds harvest-record text, not pad
+tail printable ASCII     : 1.93 % of tail bytes
+top tail byte values     : 0x00=5589847, 0x80=3117, 0x10=3111, 0x20=3098, 0x08=3032, 0x04=2976, 0x40=2940, 0x02=2933
+distinct tail byte values: 256 of 256
+
+STRUCTURE TEST - if the tail is a fixed field its zero rate is a function of page index; if it is the end of the written data the rate tracks the block.
+zero rate by page index (64-page bins, first 8): [(0, 0.543), (64, 0.5676), (128, 0.5984), (192, 0.6227), (256, 0.6113), (320, 0.618), (384, 0.6055), (448, 0.5863)]
+page-index spread        : min 0.0000 max 0.7750 -> structural, page-dependent
+per-block means          : min 0.0000 max 0.7517 -> block-dependent, i.e. content
+
+chunk grid: 16 x 1144 B = 18304 B, tail 128 B; the tail is where the code geometry stops being self-evident

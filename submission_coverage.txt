@@ -1,0 +1,16 @@
+submission coverage - does the extraction physically contain the credited records?
+  extraction file     : C:\Users\drclab\AppData\Local\Temp\up_full_v3.dump  (13600124928 B, 737854 pages of 18432 B)
+  source dump         : C:/Users/drclab/Documents/LDPC/01_01_plain.dump
+  xor key             : C:\Users\drclab\Documents\Qoder\2026-11-15\7246e382\drresearch\..\run\01_01_plain.dump.xor  (21233664 B, one block, tiled)
+  anchor map          : C:\Users\drclab\Documents\Qoder\2026-11-15\7246e382\drresearch\anchor_map_full.txt  (2064385 credited rows)
+
+page-level presence (every page that holds a credited record):
+  present in extraction : 580609 / 580609  (100.0000 %)
+  absent                : 0
+
+record-level byte proof (16376 records: 1485 targets, 12891 tier-1/2, 2000 sampled tier-3):
+  byte-identical in extraction : 16376
+  differing                    : 0
+  page not in extraction       : 0
+
+verdict: the extraction contains the bytes of every credited record, including the 1485 the tool cannot read an address out of - the 99 % line is its own digit gate, not a hole in the file

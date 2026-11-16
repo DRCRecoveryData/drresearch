@@ -1,0 +1,40 @@
+46,080 pages, tail 128 B at page offset 18304
+
+positions nonzero in >50 % of pages : 0
+  indices : []
+
+per-position detail (first 32 B of tail): rate, most common nonzero value
+  +0   nonzero  20.91 %   common nonzero 0x10 x135
+  +1   nonzero  21.09 %   common nonzero 0x10 x170
+  +2   nonzero  21.38 %   common nonzero 0x40 x162
+  +3   nonzero  21.18 %   common nonzero 0x40 x153
+  +4   nonzero  20.70 %   common nonzero 0x08 x120
+  +5   nonzero  20.82 %   common nonzero 0x80 x112
+  +6   nonzero  20.89 %   common nonzero 0x01 x118
+  +7   nonzero  20.89 %   common nonzero 0x20 x137
+  +8   nonzero  20.80 %   common nonzero 0x02 x124
+  +9   nonzero  21.00 %   common nonzero 0x04 x145
+  +10  nonzero  21.07 %   common nonzero 0x04 x134
+  +11  nonzero  21.11 %   common nonzero 0x80 x188
+  +12  nonzero  21.37 %   common nonzero 0x20 x161
+  +13  nonzero  21.16 %   common nonzero 0x10 x139
+  +14  nonzero  20.59 %   common nonzero 0x04 x117
+  +15  nonzero  20.56 %   common nonzero 0x08 x135
+  +16  nonzero  20.93 %   common nonzero 0x08 x105
+  +17  nonzero  20.67 %   common nonzero 0x10 x128
+  +18  nonzero  20.77 %   common nonzero 0x20 x126
+  +19  nonzero  20.89 %   common nonzero 0x20 x135
+  +20  nonzero  20.84 %   common nonzero 0x20 x96
+  +21  nonzero  20.89 %   common nonzero 0x04 x129
+  +22  nonzero  20.97 %   common nonzero 0x40 x108
+  +23  nonzero  21.15 %   common nonzero 0x10 x137
+  +24  nonzero  20.62 %   common nonzero 0x04 x85
+  +25  nonzero  20.79 %   common nonzero 0x04 x151
+  +26  nonzero  20.82 %   common nonzero 0x20 x135
+  +27  nonzero  20.79 %   common nonzero 0x08 x104
+  +28  nonzero  20.81 %   common nonzero 0x02 x106
+  +29  nonzero  20.77 %   common nonzero 0x08 x122
+  +30  nonzero  21.05 %   common nonzero 0x10 x120
+  +31  nonzero  20.97 %   common nonzero 0x10 x130
+
+value uniformity over the live positions:

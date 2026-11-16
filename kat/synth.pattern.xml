@@ -1,0 +1,3 @@
+<patternlist>
+  <pattern type='ECC' begin='0' end='4599' size='2359296' coverage='4096' majority='7'/>
+</patternlist>

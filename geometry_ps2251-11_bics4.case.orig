@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<Project>
+  <info>This is an artifical case file with values discovered by xorsearch</info>
+  <Records>
+    <Record StructureDefinitionName="DATA" StartAddress="0" StopAddress="1023" />
+    <Record StructureDefinitionName="SA" StartAddress="1024" StopAddress="1029" />
+    <Record StructureDefinitionName="ECC" StartAddress="1030" StopAddress="1143" />
+    <Record StructureDefinitionName="DATA" StartAddress="1144" StopAddress="2167" />
+    <Record StructureDefinitionName="SA" StartAddress="2168" StopAddress="2173" />
+    <Record StructureDefinitionName="ECC" StartAddress="2174" StopAddress="2287" />
+    <Record StructureDefinitionName="DATA" StartAddress="2288" StopAddress="3311" />
+    <Record StructureDefinitionName="SA" StartAddress="3312" StopAddress="3317" />
+    <Record StructureDefinitionName="ECC" StartAddress="3318" StopAddress="3431" />
+    <Record StructureDefinitionName="DATA" StartAddress="3432" StopAddress="4455" />
+    <Record StructureDefinitionName="SA" StartAddress="4456" StopAddress="4461" />
+    <Record StructureDefinitionName="ECC" StartAddress="4462" StopAddress="4575" />
+    <Record StructureDefinitionName="DATA" StartAddress="4576" StopAddress="5599" />
+    <Record StructureDefinitionName="SA" StartAddress="5600" StopAddress="5605" />
+    <Record StructureDefinitionName="ECC" StartAddress="5606" StopAddress="5719" />
+    <Record StructureDefinitionName="DATA" StartAddress="5720" StopAddress="6743" />
+    <Record StructureDefinitionName="SA" StartAddress="6744" StopAddress="6749" />
+    <Record StructureDefinitionName="ECC" StartAddress="6750" StopAddress="6863" />
+    <Record StructureDefinitionName="DATA" StartAddress="6864" StopAddress="7887" />
+    <Record StructureDefinitionName="SA" StartAddress="7888" StopAddress="7893" />
+    <Record StructureDefinitionName="ECC" StartAddress="7894" StopAddress="8007" />
+    <Record StructureDefinitionName="DATA" StartAddress="8008" StopAddress="9031" />
+    <Record StructureDefinitionName="SA" StartAddress="9032" StopAddress="9037" />
+    <Record StructureDefinitionName="ECC" StartAddress="9038" StopAddress="9151" />
+    <Record StructureDefinitionName="DATA" StartAddress="9152" StopAddress="10175" />
+    <Record StructureDefinitionName="SA" StartAddress="10176" StopAddress="10181" />
+    <Record StructureDefinitionName="ECC" StartAddress="10182" StopAddress="10295" />
+    <Record StructureDefinitionName="DATA" StartAddress="10296" StopAddress="11319" />
+    <Record StructureDefinitionName="SA" StartAddress="11320" StopAddress="11325" />
+    <Record StructureDefinitionName="ECC" StartAddress="11326" StopAddress="11439" />
+    <Record StructureDefinitionName="DATA" StartAddress="11440" StopAddress="12463" />
+    <Record StructureDefinitionName="SA" StartAddress="12464" StopAddress="12469" />
+    <Record StructureDefinitionName="ECC" StartAddress="12470" StopAddress="12583" />
+    <Record StructureDefinitionName="DATA" StartAddress="12584" StopAddress="13607" />
+    <Record StructureDefinitionName="SA" StartAddress="13608" StopAddress="13613" />
+    <Record StructureDefinitionName="ECC" StartAddress="13614" StopAddress="13727" />
+    <Record StructureDefinitionName="DATA" StartAddress="13728" StopAddress="14751" />
+    <Record StructureDefinitionName="SA" StartAddress="14752" StopAddress="14757" />
+    <Record StructureDefinitionName="ECC" StartAddress="14758" StopAddress="14871" />
+    <Record StructureDefinitionName="DATA" StartAddress="14872" StopAddress="15895" />
+    <Record StructureDefinitionName="SA" StartAddress="15896" StopAddress="15901" />
+    <Record StructureDefinitionName="ECC" StartAddress="15902" StopAddress="16015" />
+    <Record StructureDefinitionName="DATA" StartAddress="16016" StopAddress="17039" />
+    <Record StructureDefinitionName="SA" StartAddress="17040" StopAddress="17045" />
+    <Record StructureDefinitionName="ECC" StartAddress="17046" StopAddress="17159" />
+    <Record StructureDefinitionName="DATA" StartAddress="17160" StopAddress="18183" />
+    <Record StructureDefinitionName="SA" StartAddress="18184" StopAddress="18189" />
+    <Record StructureDefinitionName="ECC" StartAddress="18190" StopAddress="18335" />
+  </Records>
+  <Records>
+    <Record StructureDefinitionName="Page" StartAddress="0" StopAddress="18431" />
+  </Records>
+  <StructureDefinition Name="Page" Length="2" IsFindStructure="False" />
+  <Page_size>18432</Page_size>
+  <Actual_block_size>21233664</Actual_block_size>
+</Project>

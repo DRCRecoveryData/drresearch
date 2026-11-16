@@ -1,0 +1,33 @@
+new_method_timing - fast_dumpdecoder.py on the real 13.6 GB extraction, placeholder hmatrix,
+unsolvable input so every chunk runs the full iteration cap given. 1024 pages = 16384 sub-codewords.
+machine: 20 logical cores, three foreign stage348_arena_oracle.py supervisors holding 24 threads,
+so the 14-worker aggregate is only 7.5-8.4x the single-core rate, not 14x.
+workers iters     sec  s/page  chunks/s  extraction    block  raw dump
+     14     1    25.9  0.0253     632.6        5.2h     0.5m      0.7d
+     14     2    48.7  0.0476     336.4        9.7h     0.9m      1.3d
+     14     4    89.4  0.0873     183.3       17.9h     1.7m      2.3d
+     14     8   147.7  0.1442     110.9       29.6h     2.8m      3.8d
+     14    20   236.6  0.2311      69.2       47.4h     4.4m      6.1d
+     14    20   269.2  0.2629      60.9       53.9h     5.0m      6.9d
+     14    20   289.0  0.2822      56.7       57.8h     5.4m      7.5d
+      1     1    13.6  0.2125      75.3       43.6h     4.1m      5.6d
+      1    20   158.7  2.4797       6.5      508.2h    47.6m     65.5d
+
+author dumpdecoder.py, same 20-iteration cap, measured single core: 396.2 s/page
+  = 16 x 24.764 s per sub-codeword -> 126.8 h/block -> 3,384 d extraction -> 10,460 d (28.7 y) raw dump
+
+factors vs the author, same 20-iteration worst case:
+  single core  : 160x   (2.48 s/page vs his 396.2 s/page)
+  14 workers   : 1404x   (0.282 s/page)
+  14 workers, 2 mean iterations (a chunk that decodes cleanly): 8331x
+
+headline for your extraction (737,854 pages, 11,805,664 sub-codewords, 14 workers):
+  mean  1 iters/chunk:    5.2 h   raw dump   0.7 d
+  mean  2 iters/chunk:    9.7 h   raw dump   1.3 d
+  mean  4 iters/chunk:   17.9 h   raw dump   2.3 d
+  mean  8 iters/chunk:   29.6 h   raw dump   3.8 d
+  mean 20 iters/chunk:   57.8 h   raw dump   7.5 d
+
+what was proven: throughput and plumbing only. The placeholder matrix is not the PS2251-11
+code, so the solve rate - the one variable that picks a row above - stays unknown until the
+real hmatrix lands. First 1,152 pages after that prints the measured mean iteration count.

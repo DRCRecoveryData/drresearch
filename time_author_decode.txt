@@ -1,0 +1,7 @@
+  n= 9104 bits (1138 B)  chunk 0:  44.24 s  accepted=False
+  n= 9104 bits (1138 B)  chunk 1:  36.75 s  accepted=False
+author slice (DATA+ECC, SA skipped): 40.494 s/sub-codeword over 2 chunks -> 647.9 s/page, 207.33 h/block, 5533.1 d extraction (737,854 pages), 17104.6 d raw dump (2,280,960 pages)
+  n= 9152 bits (1144 B)  chunk 0:  36.58 s  accepted=False
+  n= 9152 bits (1144 B)  chunk 1:  45.88 s  accepted=False
+correct slice (DATA+SA+ECC): 41.230 s/sub-codeword over 2 chunks -> 659.7 s/page, 211.10 h/block, 5633.6 d extraction (737,854 pages), 17415.4 d raw dump (2,280,960 pages)
+machine: 20 logical cores; contention from the stage348 jobs applies

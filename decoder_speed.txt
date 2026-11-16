@@ -1,0 +1,18 @@
+author decoder cost - measured, python reference implementation
+  matrix (synthetic, sized to the recovered geometry): n=9152 m=912 row weight 16, nnz=14592
+  decoder(H) construction : 0.072 s   (9152 columns x np.where over nnz)
+  setInputMSA             : 0.131 s
+  iterateMinimumSum       : 1.346, 1.316, 1.349   median 1.346 s
+  cost is O(nnz^2) element work plus ~38336 python numpy calls per iteration
+  dumpdecoder.py imports multiprocessing and never uses it - single core, no batching
+
+  unit                                          1 iteration  20 iterations
+  sub-codeword (1144 B chunk)                       1.550 s       27.130 s
+  page (16 chunks, 18432 B)                        24.797 s       7.23 min
+  block (1152 pages, 21233664 B)                     7.94 h      5.79 days
+  submitted extraction (737854 pages)           211.77 days    10.16 years
+  whole dump (2280960 pages)                     1.79 years    31.40 years
+
+  iterations stop early on a clean syndrome, so the real figure sits between the two columns;
+  the 1-iteration column is the floor this code cannot beat even with zero bit errors.
+  measured for 3 iterations in 4.3 s of wall time under whatever else this box was doing

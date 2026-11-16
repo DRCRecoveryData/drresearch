@@ -1,0 +1,13 @@
+  block 501: errors by class [257509, 4069, 37]  space [143008520, 2598416, 14056]
+  block 500: errors by class [215589, 3162, 15]  space [146232520, 2650896, 14376]
+
+blocks [500, 501]   wrong bits attributed to each structural class
+class                     errors  share of errors   bits of space  share of space   BER in class
+plain pattern text       473,098           98.48 %     289,241,040          98.21 %       1.64e-03
+record header (82 B)       7,231            1.51 %       5,249,312           1.78 %       1.38e-03
+the injected byte             52            0.01 %          28,432           0.01 %       1.83e-03
+TOTAL                    480,381                      294,518,784
+
+error-rate lift on the injected byte vs plain pattern text: 1.12x
+verdict:
+  errors sit where the space sits (plain pattern text carries 8,128 of 8,192 bits), so the residual is channel noise and the 1.6e-3 BER is real.

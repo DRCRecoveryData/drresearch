@@ -1,0 +1,22 @@
+198 blocks x 1152 pages = 228,096 pages, tail 128 B at page offset 18304
+
+where the nonzero descrambled tail comes from
+  desc zero                                       :  135,254  ( 59.30 %)
+  raw 0xFF (erased pad)                           :   28,612  ( 12.54 %)
+  raw 0x00 (written-zero pad)                     :    2,304  (  1.01 %)
+  raw constant, other                             :        0  (  0.00 %)
+  desc nonzero, raw varies (bit errors/content)   :   61,926  ( 27.15 %)
+
+nonzero descrambled tail bytes per page (pages that are not exactly zero)
+  exactly 1 byte : 43,871
+  2-15 bytes     : 8,656
+  16+ bytes      : 40,315  <- these are the key-bleed pages, not errors
+
+set bits per nonzero descrambled tail byte: 4.454
+  ~1.0 = a single flipped bit in a pad that is otherwise exact; the key-bleed pages sit far above it
+
+per-page counts of raw pad state: uniformly 0xFF 28,612, uniformly 0x00 2,304, varying 61,926
+
+consequence for the case file: the 114 B ECC window is correct; the 128 B remainder is a
+pad that descrambles to zero wherever the key applies, and the nonzero remainder is key bleed
+over an erased or written-zero pad plus isolated raw bit errors.

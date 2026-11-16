@@ -1,0 +1,7 @@
+# Mapfile. Created by dumprelevantextract
+# THIS DEBUG LOGFILE SHOWS THE LBA BLOCKS THAT WERE FOUND
+# Commandline. synth.dump E.dump synth.pattern.xml synth_Chip.txt synth.dump.perblock.xor
+# Start time: Mon Nov 16 11:54:55 2026
+0x0 + 1
+# pos      size   status
+0x23F000 0x23F000 +

@@ -1,0 +1,7 @@
+sampled 1980 pages (0.09 % of 2280960 pages in 1980 blocks), 31680 chunks, stride 1152 pages
+128 B remainder all 0x00 : 1012/1980 pages (51.1111 %)
+128 B remainder nonzero  : 968 pages; worst first: [(82, 0, 128), (581, 0, 128), (718, 0, 128), (1005, 0, 128), (1507, 0, 128)]
+remainder byte histogram : distinct values 250, top [(0, 1968), (12, 295), (108, 294), (105, 279), (41, 278)]
+SA slots carrying data   : 2326/31680 chunks (7.34 %)
+uniform-byte parity windows (erased signature): 84/31680 (0.27 %)
+field widths audited     : DATA 1024 + SA 6 + ECC 114 = 1144 B, 16 chunks = 18304 B, remainder 128 B
