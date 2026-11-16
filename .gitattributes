@@ -1,0 +1,7 @@
+# No eol conversion for the shipped code: kat/run_kat.sh and the perl tools must stay
+# byte-identical after a checkout, or the KAT cannot run.
+*.sh -text
+*.pl -text
+*.pm -text
+*.py -text
+*.patch -text

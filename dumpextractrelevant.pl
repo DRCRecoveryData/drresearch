@@ -118,9 +118,11 @@ else
 
 
 our $xorkey="";
-if(open XOR,"<$ARGV[0].xor")
+my $keygiven=defined($ARGV[4]);
+my $keyfn=$keygiven?$ARGV[4]:"$ARGV[0].xor";
+if(open XOR,"<$keyfn")
 {
-  print "Loading XOR key from $ARGV[0].xor\n";
+  print "Loading XOR key from $keyfn\n";
   binmode XOR;
   undef $/;
   $xorkey=<XOR>;
@@ -145,6 +147,20 @@ my $char2 = "xxxxx\x0a\x00";
 
 my %posfound=(); # This is an array of the offsets of the sector start positions inside a page
 my %lbafound=();
+
+# The record writes 'Byte: ' 33 bytes after its own start, so that literal still
+# locates a sector whose '|Block#' magic has bit-rotted. Such a candidate is
+# accepted only when the two decimal fields agree with each other, because
+# nothing but the magic vouched for the offset. POSFOUND_LEGACY=1 restores the
+# original behaviour: the hash is then never cleared, so a page is also scored at
+# offsets marked by other pages, which picks up some rotted anchors by accident.
+my $legacy=defined($ENV{POSFOUND_LEGACY}) && $ENV{POSFOUND_LEGACY}=~/^[1y]/i;
+my $char3='Byte: ';
+my $char4='(0x';
+my $tolbits=defined($ENV{MAGTOL}) ? $ENV{MAGTOL} : 3;   # bits that may rot inside '|Block#'
+my @pc = map { my $x=$_; my $c=0; $c++ while($x &=$x-1); $c } 0..255;
+my @c1 = unpack('C7',$char1);
+my @c2 = unpack('C7',$char2);
 
 sub fixdecimal($) # Fixes up to 3 bit errors
 {
@@ -198,8 +214,18 @@ while(!$ende)
     print "len part: ".length(substr($xorkey,$pagesize*($pagen % $pagesperblock),$pagesize))."\n";
   }
 
-  $in^=substr($xorkey,$pagesize*($pagen % $pagesperblock),$pagesize) if(length($xorkey));
+  if(length($xorkey))
+  {
+    # A one-block key is tiled over every block (the classic Phison case). A key
+    # as long as the dump carries its own per-block/per-page keystream, so index
+    # it absolutely and wrap only if the file is not a whole number of pages.
+    my $koff=($pagesize*$pagen)%length($xorkey);
+    my $k=substr($xorkey,$koff,$pagesize);
+    $k.=substr($xorkey,0,$pagesize-length($k)) if(length($k)<$pagesize);
+    $in^=$k;
+  }
   my $sector=$in;
+  %posfound=() if(!$legacy);
 
   my $offset=0;
   my $isgood=0;
@@ -219,6 +245,45 @@ while(!$ende)
     $posfound{$result-512+7}=1;
     $offset = $result + 1; # Where to search for the next sector inside this page?
     $result = index($sector, $char2, $offset);
+  }
+
+  if(!$legacy)
+  {
+    $offset=0;
+    $result = index($sector, $char3, $offset); # Records whose magic rotted still spell 'Byte: ' 33 bytes in
+    while ($result != -1)
+    {
+      my $start=$result-33;
+      $posfound{$start}=3 if($start>=0 && !defined($posfound{$start}));
+      $offset = $result + 1;
+      $result = index($sector, $char3, $offset);
+    }
+    $offset=0;
+    $result = index($sector, $char4, $offset); # '(0x' sits 20 bytes in, so it locates records whose 'Byte: ' rotted
+    while ($result != -1)
+    {
+      my $start=$result-20;
+      $posfound{$start}=4 if($start>=0 && !defined($posfound{$start}));
+      $offset = $result + 1;
+      $result = index($sector, $char4, $offset);
+    }
+    $offset=0;
+    $result = index($sector, '|', $offset); # Three rotted bits can break every 2-byte run of '|Block#', so measure the rot wherever a '|' appears
+    while ($result != -1)
+    {
+      $posfound{$result}=5 if(!defined($posfound{$result}));
+      $offset = $result + 1;
+      $result = index($sector, '|', $offset);
+    }
+    $offset=0;
+    $result = index($sector, '#', $offset); # ... and the '|' itself can be the rotted byte, so anchor the last byte too
+    while ($result != -1)
+    {
+      my $start=$result-6;
+      $posfound{$start}=5 if($start>=0 && !defined($posfound{$start}));
+      $offset = $result + 1;
+      $result = index($sector, '#', $offset);
+    }
   }
 
   foreach my $result (sort keys %posfound)
@@ -246,6 +311,43 @@ while(!$ende)
     #print " LBA:$lba" if(defined($lba));
     #print " LBAd:$lbad($lbaD) LBAh:$lbah($lbaH) LBAb:$lbab($lbaB)" if(defined($lba));
     #print "\n";
+
+    # Markers 3 and 4 come from a record literal, not from the magic, so the
+    # record has to vouch for the position before its address may be counted.
+    my $mode=$posfound{$result};
+
+    if($mode>=3)
+    {
+      # How much of '|Block#' (or of the sector tail, which is the same record seen
+      # from the other end) actually rotted.  Within $tolbits it is the author's own
+      # exact-marker case, so the repaired fields are trusted as before; beyond that
+      # the literals and the arithmetic have to carry it alone.
+      my $rot=0; my $i=0;
+      while($i<7 && $rot<=$tolbits) { $rot+=$pc[ord(substr($sector,$result+$i,1))^$c1[$i]]; $i++; }
+      if($rot>$tolbits && $result+512<=length($sector))
+      {
+        my $trotd=0; $i=0;
+        while($i<7 && $trotd<=$tolbits) { $trotd+=$pc[ord(substr($sector,$result+505+$i,1))^$c2[$i]]; $i++; }
+        $rot=$trotd if($trotd<$rot);
+      }
+      if($rot>$tolbits)
+      {
+        # Random data gives two of '(0x' / ') ' / 'Byte: ' plus a clean 12- or 20-digit
+        # field far less than once in a 42 GB dump, so this cannot fire by luck.
+        my $lit=0;
+        $lit++ if(substr($sector,$result+20,3) eq '(0x');
+        $lit++ if(substr($sector,$result+31,2) eq ') ');
+        $lit++ if(substr($sector,$result+33,6) eq 'Byte: ');
+        next if($lit<2);
+        my $cleandec=substr($sector,$result+7,12)=~m/^(\d{12})$/;
+        my $cleanbyte=substr($sector,$result+39,20)=~m/^(\d{20})$/;
+        my $agree=defined($lbaD) && defined($lbaB) && $lbaD == $lbaB;
+        next if(!$agree && !$cleandec && !$cleanbyte);
+        # Without the arithmetic check, a value only counts if its own field needed no repair.
+        undef $lbaD if(!$cleandec && !$agree);
+        undef $lbaB if(!$cleanbyte && !$agree);
+      }
+    }
 
     if(defined($lbaD) && $lbaD>=$eccstart && $lbaD<=$eccend)
     {
@@ -321,15 +423,51 @@ for(my $lba=$eccstart; $lba<=$eccend; $lba+=$inc)
 print BMAP sprintf("0x%X 0x%X %s\n",($eccend-$eccstart+1)<<9,($eccend-$prevpos+1)<<9,defined($prevval)?"+":"-");
 close BMAP;
 close PMAP;
+# FOUNDLIST/MISSINGLIST: the grid points accepted/rejected, one LBA per line. Only
+# wanted for comparing two versions' decisions; the counting above is unchanged.
+for my $spec (["FOUNDLIST",1],["MISSINGLIST",0])
+{
+  my ($env,$want)=@$spec;
+  next if(!$ENV{$env});
+  open my $FH,">:raw",$ENV{$env} or die "Could not write $ENV{$env}: $!\n";
+  for(my $lba=$eccstart; $lba<=$eccend; $lba+=$inc)
+  {
+    print $FH "$lba\n" if(defined($lbafound{$lba}) == $want);
+  }
+  close $FH;
+}
 my $percent=($found+$missing)?int(100*$found/($found+$missing)) : 0;
 print "Found: $found Missing: $missing => $percent % found (Range searched: $eccstart..$eccend inc $inc)\n";
 print "Missing: ".join(",",@missings)."\n" if($missing && $missing<20);
+sub try_perblock($)
+{
+  my ($basekey)=@_;
+  return 0 if($keygiven); # we are already running with an explicit key: no recursion
+  my $pbkey="$imagefn.perblock.xor";
+  my $solver=__FILE__; $solver=~s/\w+\.pl$/xorsolve_perblock.py/;
+  print "\nxorsearch.pl assumes the same key in every block. Trying a key byte per block instead:\n\n";
+  my $scmd="python \"$solver\" \"$imagefn\" \"$casefn\" \"$pbkey\"".($basekey?" --base \"$basekey\"":"");
+  print "CMD: $scmd\n";
+  system $scmd;
+  return 0 if(!-f $pbkey);
+  print "\nPer-block XOR key written to $pbkey, now trying again.\n\n";
+  unlink $dumpfn;
+  my $cmd="perl \"$0\" \"".join("\" \"",@ARGV)."\" \"$pbkey\"";
+  print "Running $cmd\n";
+  system $cmd;
+  return 1;
+}
+
 if($percent<99)
 {
   print "\nThis dump is incomplete or has not been properly XOR decoded yet.\n";
   if(-f "$imagefn.xor")
   {
+    if(try_perblock("$imagefn.xor")) { exit; }
     print "Perhaps the XOR key is wrong? We give up now.\n";
+    print "A key that changes from block to block is worth a dump-sized key file, not a one-block key:\n";
+    print "  python xorsolve_perblock.py \"$imagefn\" \"$casefn\" \"$imagefn.perblock.xor\" --base \"$imagefn.xor\"\n";
+    print "then: perl $0 \"".join("\" \"",@ARGV)."\" \"$imagefn.perblock.xor\"\n";
     exit;
   }
   if(!defined($casefn))
@@ -352,6 +490,7 @@ if($percent<99)
   }
   else
   {
+    if(try_perblock("")) { exit; }
     print "\nThe XOR key could not be found automatically, please check whether the pattern has been written to the disk/card correctly, and whether the geometry of the dump is correct\n";
     print "Please check the size and make sure it has been XOR decoded properly. If that doesn't help, please provide the whole dump.\n";
   }

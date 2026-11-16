@@ -1,0 +1,31 @@
+diff --git a/dumpextractrelevant.pl b/dumpextractrelevant.pl
+index 5349abd..b9ca25c 100755
+--- a/dumpextractrelevant.pl
++++ b/dumpextractrelevant.pl
+@@ -198,7 +198,16 @@ while(!$ende)
+     print "len part: ".length(substr($xorkey,$pagesize*($pagen % $pagesperblock),$pagesize))."\n";
+   }
+ 
+-  $in^=substr($xorkey,$pagesize*($pagen % $pagesperblock),$pagesize) if(length($xorkey));
++  if(length($xorkey))
++  {
++    # A one-block key is tiled over every block (the classic Phison case). A key
++    # as long as the dump carries its own per-block/per-page keystream, so index
++    # it absolutely and wrap only if the file is not a whole number of pages.
++    my $koff=($pagesize*$pagen)%length($xorkey);
++    my $k=substr($xorkey,$koff,$pagesize);
++    $k.=substr($xorkey,0,$pagesize-length($k)) if(length($k)<$pagesize);
++    $in^=$k;
++  }
+   my $sector=$in;
+ 
+   my $offset=0;
+@@ -330,6 +339,8 @@ if($percent<99)
+   if(-f "$imagefn.xor")
+   {
+     print "Perhaps the XOR key is wrong? We give up now.\n";
++    print "If the key changes from block to block, build a dump-sized key instead of a one-block key:\n";
++    print "  python xorsolve_perblock.py \"$imagefn\" \"$casefn\" \"$imagefn.xor\"\n";
+     exit;
+   }
+   if(!defined($casefn))
